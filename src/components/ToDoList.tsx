@@ -1,61 +1,43 @@
 // src/components/ToDoList.tsx
-import { useState } from 'react';
-import { useAddTask, useTasks } from '../hooks/useTasks';
-import { Task } from '../types/types';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useTasks, useUpdateTaskStatus } from '../hooks/useTasks';
+import AddTask from './AddTask';
+import TaskColumn from './TaskColumn';
 
 const ToDoList: React.FC = () => {
     const { data: tasks, isLoading, error } = useTasks();
-    const addTaskMutation = useAddTask();
-    // const updateTaskMutation = useUpdateTask();
-    // const deleteTaskMutation = useDeleteTask();
+    const updateTaskStatusMutation = useUpdateTaskStatus();
 
-    const [newTaskName, setNewTaskName] = useState<string>('');
-
-    if (isLoading) return <p>Loading tasks...</p>;
-    if (error) return <p>Error loading tasks: {error.message}</p>;
-
-    const handleAddTask = () => {
-        if (newTaskName.trim()) {
-            addTaskMutation.mutate({ name: newTaskName });
-            setNewTaskName('');
-        }
+    const handleUpdateTaskStatus = (taskId: string, status: 'todo' | 'inProgress' | 'done') => {
+        updateTaskStatusMutation.mutate({ _id: taskId, status });
     };
 
-    const handleToggleTask = (task: Task) => {
-        // updateTaskMutation.mutate({ id: task.id, completed: task.status !== 'done' });
-        console.log(task)
-    };
+    if (isLoading) return <p className="text-center text-gray-500">Loading tasks...</p>;
+    if (error) return <p className="text-center text-red-500">Error loading tasks: {error.message}</p>;
 
-    const handleDeleteTask = (id: number) => {
-        // deleteTaskMutation.mutate(id);
-        console.log(id)
+    const columns = {
+        todo: tasks?.filter(task => task.status === 'todo'),
+        inProgress: tasks?.filter(task => task.status === 'inProgress'),
+        done: tasks?.filter(task => task.status === 'done'),
     };
 
     return (
-        <div>
-            <h1>To-Do List</h1>
-            <input
-                type="text"
-                value={newTaskName}
-                onChange={(e) => setNewTaskName(e.target.value)}
-                placeholder="New Task"
-            />
-            <button onClick={handleAddTask}>Add Task</button>
-
-            <ul>
-                {tasks?.map((task) => (
-                    <li key={task.id}>
-                        <span
-                            style={{ textDecoration: task.status !== 'done' ? 'line-through' : 'none' }}
-                            onClick={() => handleToggleTask(task)}
-                        >
-                            {task.title}
-                        </span>
-                        <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <DndProvider backend={HTML5Backend}>
+            <div className="max-w-4xl mx-auto mt-10">
+                <AddTask />
+                <div className="grid grid-cols-3 gap-4">
+                    {Object.entries(columns).map(([status, tasks]) => (
+                        <TaskColumn
+                            key={status}
+                            status={status as 'todo' | 'inProgress' | 'done'}
+                            tasks={tasks || []}
+                            onDropTask={handleUpdateTaskStatus}
+                        />
+                    ))}
+                </div>
+            </div>
+        </DndProvider>
     );
 };
 

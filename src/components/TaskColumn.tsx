@@ -1,59 +1,43 @@
-// src/app/TaskColumn.tsx
+// src/components/TaskColumn.tsx
+import { useDrop } from 'react-dnd';
+import TaskCard from './TaskCard';
 import { Task } from '../types/types';
+import { useRef } from 'react';
+import { useDeleteTask } from '@/hooks/useTasks';
 
 interface TaskColumnProps {
-    title: string;
+    status: 'todo' | 'inProgress' | 'done';
     tasks: Task[];
-    onUpdateStatus: (id: number, newStatus: Task['status']) => void;
+    onDropTask: (taskId: string, newStatus: 'todo' | 'inProgress' | 'done') => void;
 }
 
-const TaskColumn: React.FC<TaskColumnProps> = ({ title, tasks, onUpdateStatus }) => {
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'todo':
-                return 'text-blue-500';
-            case 'in-progress':
-                return 'text-yellow-500';
-            case 'done':
-                return 'text-green-500';
-            default:
-                return 'text-gray-500';
-        }
-    };
+const TaskColumn: React.FC<TaskColumnProps> = ({ status, tasks, onDropTask }) => {
+    const deleteTaskMutation = useDeleteTask();
+    const [{ isOver }, dropRef] = useDrop({
+        accept: 'TASK',
+        drop: (item: { id: string }) => onDropTask(item.id, status),
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+        }),
+    });
+
+    // Create a ref and combine it with dropRef
+    const columnRef = useRef<HTMLDivElement>(null);
+    dropRef(columnRef);
+
+    function handleDeleteTask(_id: string): void {
+        deleteTaskMutation.mutate(_id)
+    }
+
     return (
-        <div className="bg-gray-800 rounded-lg shadow-lg w-1/3 p-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-300">{title}</h2>
-            <div className="space-y-4">
+        <div
+            ref={columnRef}
+            className={`p-4 border rounded-md ${isOver ? 'bg-gray-100' : 'bg-gray-50'}`}
+        >
+            <h2 className="text-xl font-bold capitalize mb-4 text-gray-900 ">{status}</h2>
+            <div className="space-y-2">
                 {tasks.map(task => (
-                    <div key={task.id} className="bg-gray-700 p-4 rounded-md shadow-md hover:shadow-lg transition-shadow">
-                        <p className="text-gray-100 font-medium">{task.title}</p>
-                        <div className="flex space-x-4 mt-2 text-sm">
-                            {task.status !== 'todo' && (
-                                <button
-                                    onClick={() => onUpdateStatus(task.id, 'todo')}
-                                    className={`${getStatusColor('todo')} hover:underline`}
-                                >
-                                    À faire
-                                </button>
-                            )}
-                            {task.status !== 'in-progress' && (
-                                <button
-                                    onClick={() => onUpdateStatus(task.id, 'in-progress')}
-                                    className={`${getStatusColor('in-progress')} hover:underline`}
-                                >
-                                    En cours
-                                </button>
-                            )}
-                            {task.status !== 'done' && (
-                                <button
-                                    onClick={() => onUpdateStatus(task.id, 'done')}
-                                    className={`${getStatusColor('done')} hover:underline`}
-                                >
-                                    Terminé
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                    <TaskCard key={task._id} task={task} onDelete={() => handleDeleteTask(task._id)} />
                 ))}
             </div>
         </div>

@@ -1,7 +1,6 @@
-// types/types.ts
+// src/types/types.ts
 export interface Task {
-    id: number;
-    title: string;
-    status: 'todo' | 'in-progress' | 'done';
-  }
-  
+  _id: string;  // ID généré par MongoDB
+  title: string;
+  status: 'todo' | 'inProgress' | 'done';
+}

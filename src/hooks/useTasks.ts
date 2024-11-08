@@ -24,6 +24,10 @@ export const useInfiniteTasks = (limit: number) => {
         const morePagesExist = lastPage.tasks.length === limit;
         return morePagesExist ? allPages.length + 1 : undefined;
       },
+      getPreviousPageParam: (firstPage, allPages) => {
+        const lessPagesExist = firstPage.tasks.length === limit;
+        return lessPagesExist ? allPages.length + 1 : undefined;
+      }
     }
   );
 };

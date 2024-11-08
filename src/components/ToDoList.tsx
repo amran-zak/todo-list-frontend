@@ -4,12 +4,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTasks, useUpdateTaskStatus } from '../hooks/useTasks';
 import AddTask from './AddTask';
 import TaskColumn from './TaskColumn';
-import { useState } from 'react';
 
 const ToDoList: React.FC = () => {
-    const [page, setPage] = useState(1);
-    const limit = 3;
-    const { data, isLoading, error } = useTasks(page, limit);
+    const { data, isLoading, error } = useTasks(1, 100);
     const updateTaskStatusMutation = useUpdateTaskStatus();
 
     const handleUpdateTaskStatus = (taskId: string, status: 'todo' | 'inProgress' | 'done') => {
@@ -38,25 +35,6 @@ const ToDoList: React.FC = () => {
                             onDropTask={handleUpdateTaskStatus}
                         />
                     ))}
-                </div>
-                <div className="flex justify-between mt-4">
-                    <button
-                        onClick={() => setPage((old) => Math.max(old - 1, 1))}
-                        disabled={page === 1}
-                        className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                    >
-                        Précédent
-                    </button>
-
-                    <span>Page {page}</span>
-
-                    <button
-                        onClick={() => setPage((old) => (!data || data.tasks.length < limit ? old : old + 1))}
-                        disabled={data && data.tasks.length < limit}
-                        className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                    >
-                        Suivant
-                    </button>
                 </div>
             </div>
         </DndProvider>

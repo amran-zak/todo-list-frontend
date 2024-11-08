@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
+import ReactQueryProvider from "@/lib/ReactQueryProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -53,9 +54,11 @@ export default function RootLayout({
           </nav>
 
           {/* Contenu principal */}
-          <main className="flex-grow bg-gray-100">
-            {children}
-          </main>
+          <ReactQueryProvider>
+            <main className="flex-grow bg-gray-100">
+              {children}
+            </main>
+          </ReactQueryProvider>
 
           {/* Pied de page */}
           <footer className="bg-gray-800 text-white text-center py-4">

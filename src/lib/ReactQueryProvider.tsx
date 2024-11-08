@@ -4,6 +4,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface ReactQueryProviderProps {
     children: React.ReactNode;
@@ -14,8 +16,10 @@ const ReactQueryProvider: React.FC<ReactQueryProviderProps> = ({ children }) => 
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools initialIsOpen={false} />
+            <DndProvider backend={HTML5Backend}>
+                {children}
+                <ReactQueryDevtools initialIsOpen={false} />
+            </DndProvider>
         </QueryClientProvider>
     );
 };

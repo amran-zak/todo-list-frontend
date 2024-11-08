@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
 import ReactQueryProvider from "@/lib/ReactQueryProvider";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

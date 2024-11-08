@@ -1,11 +1,17 @@
 // src/hooks/useTasks.ts
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addTask, deleteTask, fetchTasks, updateTaskStatus } from '../lib/api';
 import { Task } from '../types/types';
 
 // Hook pour récupérer les tâches
-export const useTasks = () => {
-  return useQuery<Task[], Error>({ queryKey: ['tasks'], queryFn: fetchTasks });
+export const useTasks = (page: number, limit: number) => {
+  return useQuery<{ tasks: Task[], total: number }, Error>(
+    {
+      queryKey: ['tasks', page],
+      queryFn: () => fetchTasks(page, limit),
+      // placeholderData: keepPreviousData,
+    }
+  );
 };
 
 // Hook pour ajouter une tâche

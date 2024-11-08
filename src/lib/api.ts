@@ -1,8 +1,8 @@
 // src/lib/api.ts
 import { Task } from '../types/types';
 
-export const fetchTasks = async (): Promise<Task[]> => {
-  const response = await fetch('http://localhost:3001/tasks');
+export const fetchTasks = async (page: number, limit: number): Promise<{ tasks: Task[], total: number }> => {
+  const response = await fetch(`http://localhost:3001/tasks?page=${page}&limit=${limit}`);
   if (!response.ok) throw new Error('Failed to fetch tasks');
   return response.json();
 };

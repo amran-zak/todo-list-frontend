@@ -7,6 +7,12 @@ export const fetchTasks = async (page: number, limit: number): Promise<{ tasks: 
   return response.json();
 };
 
+export const fetchTasksCaching = async (): Promise<Task[]> => {
+  const response = await fetch(`http://localhost:3001/tasks`);
+  if (!response.ok) throw new Error('Failed to fetch tasks');
+  return response.json();
+};
+
 export const addTask = async ({ title }: { title: string }): Promise<Task> => {
   const response = await fetch('http://localhost:3001/tasks', {
     method: 'POST',

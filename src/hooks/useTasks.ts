@@ -1,5 +1,5 @@
 // src/hooks/useTasks.ts
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addTask, deleteTask, fetchTasks, updateTaskStatus } from '../lib/api';
 import { Task } from '../types/types';
 
@@ -10,6 +10,20 @@ export const useTasks = (page: number, limit: number) => {
       queryKey: ['tasks', page],
       queryFn: () => fetchTasks(page, limit),
       // placeholderData: keepPreviousData,
+    }
+  );
+};
+
+export const useInfiniteTasks = (limit: number) => {
+  return useInfiniteQuery(
+    {
+      queryKey: ['tasks'],
+      queryFn: ({ pageParam = 1 }) => fetchTasks(pageParam, limit),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        const morePagesExist = lastPage.tasks.length === limit;
+        return morePagesExist ? allPages.length + 1 : undefined;
+      },
     }
   );
 };

@@ -41,8 +41,11 @@ export default function RootLayout({
                   <Link href="/">
                     <span className="text-xl font-semibold hover:text-gray-200">MyApp</span>
                   </Link>
-                  <Link href="/">
-                    <span className="hover:text-gray-200">Todo</span>
+                  <Link href="/infiniteToDoList">
+                    <span className="hover:text-gray-200">InfiniteToDoList</span>
+                  </Link>
+                  <Link href="/paginatedToDoList">
+                    <span className="hover:text-gray-200">PaginatedToDoList</span>
                   </Link>
                   <Link href="/about">
                     <span className="hover:text-gray-200">About</span>

@@ -38,6 +38,7 @@ export const useAddTask = () => {
   return useMutation<Task, Error, { title: string }>(
     {
       mutationFn: addTask, // On passe ici directement la fonction de mutation
+      // Invalider la requête 'tasks' pour rafraîchir la liste des tâches
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ['tasks'],
